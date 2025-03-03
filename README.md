@@ -151,4 +151,4 @@ gantt
 ```
 ## 项目其他文档
 
-- [UI/UX 设计](./design/index.md)
+- [UI/UX 设计](./design)
