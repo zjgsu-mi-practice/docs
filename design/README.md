@@ -13,7 +13,7 @@
 
 ## 线框图
 
-![](./wireframe.webp)
+![](./wireframes.webp)
 
 ## 风格规范
 
