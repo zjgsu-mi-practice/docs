@@ -4,9 +4,9 @@
 ```mermaid
 flowchart TB
     subgraph 客户端
-        A[Web端\nReact+Ant Design] -->|HTTP API| D
-        B[移动端\nReact Native] -->|HTTP API| D
-        C[微信小程序\nTaro] -->|HTTP API| D
+        A[Web端React+Ant Design] -->|HTTP API| D
+        B[移动端<br>React Native] -->|HTTP API| D
+        C[微信小程序<br>Taro] -->|HTTP API| D
     end
 
     subgraph 服务端
