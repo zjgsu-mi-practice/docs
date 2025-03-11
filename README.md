@@ -152,3 +152,4 @@ gantt
 ## 项目其他文档
 
 - [UI/UX 设计](./design)
+- [系统架构](./architecture)
