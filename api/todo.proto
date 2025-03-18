@@ -1,0 +1,143 @@
+syntax = "proto3";
+package todo.v1;
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+
+// ------------------- 基础消息类型 -------------------
+message Todo {
+  string id = 1; // UUID
+  string title = 2;
+  string description = 3;
+  Status status = 4;
+  google.protobuf.Timestamp due_date = 5;
+  string category_id = 6;      // 关联 Category
+  repeated string tag_ids = 7; // 关联多个 Tag
+  string memo_id = 8;          // 关联 Memo
+}
+
+message Reminder {
+  string id = 1;
+  string todo_id = 2; // 关联 Todo
+  google.protobuf.Timestamp time = 3;
+  NotifyMethod notify_method = 4;
+}
+
+message Category {
+  string id = 1;
+  string name = 2;
+  string color = 3; // 如 "#FF5733"
+}
+
+message Tag {
+  string id = 1;
+  string name = 2;
+}
+
+message Memo {
+  string id = 1;
+  string content = 2;
+  repeated string attachments = 3; // 文件 URL
+}
+
+// ------------------- 枚举类型 -------------------
+enum Status {
+  STATUS_PENDING = 0;
+  STATUS_IN_PROGRESS = 1;
+  STATUS_COMPLETED = 2;
+}
+
+enum NotifyMethod {
+  NOTIFY_EMAIL = 0;
+  NOTIFY_PUSH = 1;
+  NOTIFY_SMS = 2;
+}
+
+// ------------------- 请求/响应结构 -------------------
+
+// Todo 分页请求
+message ListTodosRequest {
+  optional Status filter_status = 1;
+  int32 page = 2;
+  int32 limit = 3;
+}
+
+message ListTodosResponse {
+  repeated Todo todos = 1;
+  Pagination pagination = 2;
+}
+
+message Pagination {
+  int32 total = 1;
+  int32 page = 2;
+  int32 limit = 3;
+}
+
+// ------------------- 服务定义 -------------------
+service TodoService {
+  // Todo 操作
+  rpc ListTodos(ListTodosRequest) returns (ListTodosResponse);
+  rpc GetTodo(GetTodoRequest) returns (Todo);
+  rpc CreateTodo(CreateTodoRequest) returns (Todo);
+  rpc UpdateTodo(UpdateTodoRequest) returns (Todo);
+  rpc DeleteTodo(DeleteTodoRequest) returns (google.protobuf.Empty);
+
+  // Reminder 操作（关联 Todo）
+  rpc ListReminders(ListRemindersRequest) returns (ListRemindersResponse);
+  rpc CreateReminder(CreateReminderRequest) returns (Reminder);
+}
+
+service CategoryService {
+  rpc ListCategories(google.protobuf.Empty) returns (ListCategoriesResponse);
+  rpc CreateCategory(Category) returns (Category);
+}
+
+service TagService {
+  rpc ListTags(google.protobuf.Empty) returns (ListTagsResponse);
+  rpc CreateTag(Tag) returns (Tag);
+}
+
+service MemoService {
+  rpc GetMemo(GetMemoRequest) returns (Memo);
+  rpc UpdateMemo(UpdateMemoRequest) returns (Memo);
+}
+
+// ------------------- 详细请求结构 -------------------
+message GetTodoRequest { string id = 1; }
+
+message CreateTodoRequest {
+  string title = 1;
+  optional string description = 2;
+  optional string category_id = 3;
+  repeated string tag_ids = 4;
+}
+
+message UpdateTodoRequest {
+  string id = 1;
+  Todo todo = 2; // 全量更新字段
+}
+
+message DeleteTodoRequest { string id = 1; }
+
+message ListRemindersRequest {
+  string todo_id = 1; // 关联的 Todo ID
+}
+
+message ListRemindersResponse { repeated Reminder reminders = 1; }
+
+message CreateReminderRequest {
+  string todo_id = 1;
+  google.protobuf.Timestamp time = 2;
+  NotifyMethod notify_method = 3;
+}
+
+message ListCategoriesResponse { repeated Category categories = 1; }
+
+message ListTagsResponse { repeated Tag tags = 1; }
+
+message GetMemoRequest { string id = 1; }
+
+message UpdateMemoRequest {
+  string id = 1;
+  Memo memo = 2;
+}
